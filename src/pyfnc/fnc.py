@@ -1,4 +1,6 @@
 """
+    pyfnc
+    
     @author: Jean-Lou Dupont
     
 """
@@ -23,14 +25,10 @@ def patterned(f):
         
         psf: list of (fname, sig)        
         """
-        found=False
         for fn, sig in psf:
             zliste=zip(sig, pa)
             if check_match_type(zliste):
-                found=True
-                break
-        if found:
-            return fn(*pa)
+                return fn(*pa)
         
         sig=map(type, pa)
         raise RuntimeError("No matching function '%s' with sig: %s" % (f.__name__, str(sig)))
