@@ -1,0 +1,16 @@
+*.pyc
+*.class
+*.log
+*.err
+.junit*
+war/
+!war/WEB-INF/
+*.zip
+*.tar
+*.gz
+*.sql
+*.sql3
+*.csv
+.gwt-log
+/dist
+*.egg-info
