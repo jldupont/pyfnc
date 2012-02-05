@@ -73,7 +73,7 @@ Tests can be performed using `nosetests` in the root directory.
 
 setup(name=         'pyfnc',
       version=      __version__,
-      description=  'Python decorators for pattern matching function dispatch',
+      description=  'Functional style dictionary and list classes + decorators for pattern matching function dispatch',
       author=       __author__,
       author_email= 'jl@jldupont.com',
       url=          'http://www.systemical.com/doc/opensource/pyfnc',
