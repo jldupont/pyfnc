@@ -4,6 +4,20 @@
 """
 import types
 
+def partial(fn, *pargs):
+    """
+    Partial Function builder
+    >>> f=lambda p1,p2: p1+p2
+    >>> pf=partial(f, 66)
+    >>> pf(44)
+    110
+    """
+    def _(*args):
+        plist=list(pargs)
+        plist.extend(list(args))
+        return fn(*plist)
+    return _
+
 def check_pair(pair):
     """ (e1, e2) --> (type|value, value)
     """
@@ -114,6 +128,31 @@ def check_arity(liste):
             return False
     
     return reduce(reducer, liste)
+
+    
+class meta_enhancer(type):
+    """
+    Metaclass which enhances a given set of class methods with a "return self" statement
+    """
+    def __new__(cls, future_class_name, 
+                future_class_parents, future_class_attr):
+
+        parent=future_class_parents[0]
+
+        for m in future_class_attr["to_enhance"]:
+            method=getattr(parent, m)
+
+            def close_on_wrapper(method_name, method):
+                def wrapper(this, *p):
+                    method(this, *p)
+                    return this
+                return wrapper
+            
+            future_class_attr[m]=close_on_wrapper(m, method)
+            
+        return type(future_class_name, future_class_parents, future_class_attr)
+
+
     
 if __name__ == '__main__':
     import doctest
