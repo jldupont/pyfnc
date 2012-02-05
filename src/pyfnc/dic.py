@@ -4,48 +4,33 @@
     Created on 2012-02-04
     @author: jldupont
 """
-from fnc_tools import meta_enhancer
+from fnc_tools import meta_enhancer, partial
 
 class dic(dict):
     """
     Enhanced dictionary
     """
-    to_enhance=["setdefault", "clear", "update",]
+    to_enhance=["setdefault", "clear", "update", "__setitem__"]
 
     __metaclass__=meta_enhancer
 
-    def __init__(self, safe=False):
+    def __init__(self, *p):
         """
         If `safe` is True, then retrieving an undefined key will return `None` instead of throwing an exception
         """
-        dict.__init__(self)
-        self._safe=safe
-        self._lock=False
-        self._exception=False
+        dict.__init__(self, *p)
+        self._safe=False
+        self.last_value=None
 
-    def lock(self, state):
-        """
-        Lock-out 'write' operation
-        """
-        self._lock=state
-        
-    def raise_exception(self, state):
-        """
-        Raise exception on 'write' operation when locked
-        """
-        self._exception=state
-        
+    def issafe(self):
+        return self._safe
+
+    def safe(self, state):
+        self._safe=state
+
     def clone(self):
         return dic(self)
         
-    def __setitem__(self, key, value):
-        if self._lock:
-            if self._exception:
-                raise Exception("Locked - attempt on '%s' with '%s'" % (key, value))
-            return
-        
-        dict.__setitem__(self, key, value)
-
     def __getitem__(self, key):
         if self._safe:
             return self.get(key, None)
@@ -53,19 +38,11 @@ class dic(dict):
         return dict.__getitem__(self, key)
 
     
-    def _f(self, f, *args, **kwargs):
-        """
-        Partial Function builder
-        """
-        def _(x, y):
-            return f(x, y, *args, **kwargs)
-        return _
-
     def all(self, f, *args, **kwargs):
         """
         Applies 'f' to all [k:v] pairs and expects 'True' for all results
         """
-        _f = self._f(f, *args, **kwargs)
+        _f = partial(f, *args, **kwargs)
 
         for x, y in self.items():
             if not _f(x, y):
@@ -77,7 +54,7 @@ class dic(dict):
         """
         Applies 'f' to all [k:v] pairs and expects at least 1 'True' result
         """
-        _f = self._f(f, *args, **kwargs)
+        _f = partial(f, *args, **kwargs)
 
         for x, y in self.items():
             if _f(x, y):
@@ -89,7 +66,8 @@ class dic(dict):
         """
         Applies 'f' for each [k,v] pair - 'f' must return (k,v) pair
         """
-        _f = self._f(f, *args, **kwargs)
+        #_f = self._f(f, *args, **kwargs)
+        _f=partial(f, *args, **kwargs)
         
         d=dic()
         for k,v in self.items():
@@ -111,7 +89,7 @@ class dic(dict):
         """
         Count pairs matching predicate
         """
-        _f=self._f(f, *args, **kwargs)
+        _f=partial(f, *args, **kwargs)
         
         count=0
         for k,v in self.items():

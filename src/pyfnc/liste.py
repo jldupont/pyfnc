@@ -18,6 +18,12 @@ class liste(list):
     def __init__(self, *p):
         list.__init__(self, *p)
 
+        self.last_value=None
+
+    def __setitem__(self, *p):
+        list.__setitem__(self, *p)
+        return self        
+
     def push(self, el):
         """
         Pushes an element at the front of the list
@@ -27,14 +33,6 @@ class liste(list):
         list.insert(self, 0, el)
         return self
     
-    def _f(self, f, *args, **kwargs):
-        """
-        Partial Function builder
-        """
-        def _(x):
-            return f(x, *args, **kwargs)
-        return _
-
     def clone(self):
         return liste(self)
     
@@ -42,13 +40,13 @@ class liste(list):
         """
         Calls 'f' on self, returns result
         """
-        return self._f(f, *args, **kwargs)(self)
+        return partial(f, *args, **kwargs)(self)
     
     def tee(self, f, *args, **kwargs):
         """
         Calls 'f' on self, returns self, keeps 'last value'
         """
-        self.last_value=self._f(f, *args, **kwargs)(self)
+        self.last_value=partial(f, *args, **kwargs)(self)
         return self
 
     def invoke(self, function_name, *args, **kwargs):

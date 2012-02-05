@@ -150,6 +150,9 @@ class TestCases(unittest.TestCase):
         r=l.count(predicate)
         self.assertEqual(4, r)
      
+
+        
+     
 if __name__ == '__main__':
     unittest.main()
 

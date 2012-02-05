@@ -51,26 +51,10 @@ class TestCases(unittest.TestCase):
         self.assertTrue(d.any(starts_kv))
 
     def test_safe(self):
-        d=dic(safe=True)
+        d=dic()
+        d.safe(True)
         
         self.assertEqual(d[0], None)
-        
-    def test_set_lock(self):
-        d=dic()
-        d.lock(True)
-        d["k1"]="v1"
-        self.assertEqual( d, {} )
-        d.lock(False)
-        d["k1"]="v1"
-        self.assertEqual( d, {"k1":"v1"} )
-        
-    def test_raise(self):
-        d=dic()
-        d.lock(True)
-        d.raise_exception(True)
-        
-        with self.assertRaises(Exception):
-            d[0]=0
         
     def test_each(self):
         d=dic()
