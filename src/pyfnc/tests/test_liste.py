@@ -101,6 +101,55 @@ class TestCases(unittest.TestCase):
         self.assertEqual(sl, [1,2])
         self.assertEqual(len(l), 9)
      
+    def test_do(self):
+        l=liste()
+        l.extend([1,2,3,4,5])
+        ln=l.do(len)
+        self.assertEqual(len(l), ln)
+        
+        l.push(6)
+        ln=l.do(len)
+        self.assertEqual(len(l), ln)
+
+    def test_tee(self):
+        l=liste()
+        l.extend([1,2,3,4,5])
+        lr=l.tee(len)
+        self.assertEqual(l, lr)
+        self.assertEqual(l.last_value, len(l))
+        
+    def test_invoke(self):
+        l=liste()
+        l.extend(["a", "ab", "ac"])
+        lr=l.invoke("upper")
+        self.assertEqual(["A", "AB", "AC"], lr)
+     
+    def test_attr(self):
+        l=liste()
+        l.extend(["a", "ab", "ac"])
+        lr=l.attr("__class__")
+        self.assertEqual([str, str, str], lr)
+        
+    def test_find(self):
+        l=liste()
+        l.extend([1,2,3,4,5])
+        r=l.find(lambda x:x==5)
+        self.assertEqual(r, 5)
+        
+    def test_slice_class(self):
+        l=liste()
+        l.extend([1,2,3,4,5])
+        lr=l[0:2]
+        self.assertTrue(lr.__class__==liste)
+        
+    def count(self):
+        l=liste()
+        l.extend([1,2,3,4,5,6,7,8,9])
+
+        predicate=lambda x: x%2==0
+        r=l.count(predicate)
+        self.assertEqual(4, r)
+     
 if __name__ == '__main__':
     unittest.main()
 

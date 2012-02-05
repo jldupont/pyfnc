@@ -64,6 +64,39 @@ class TestCases(unittest.TestCase):
         d["k1"]="v1"
         self.assertEqual( d, {"k1":"v1"} )
         
+    def test_raise(self):
+        d=dic()
+        d.lock(True)
+        d.raise_exception(True)
+        
+        with self.assertRaises(Exception):
+            d[0]=0
+        
+    def test_each(self):
+        d=dic()
+        d.update({"K1":"V1", "K2":"V2"})
+        
+        f=lambda k,v: (k.lower(), v.lower())
+        dr=d.map(f)
+        self.assertEqual(dr, {"k1":"v1", "k2":"v2"})
+        
+    def test_do(self):
+        d=dic()
+        d.update({"K1":"V1", "K2":"V2"})
+
+        dr=d.do(len)
+        self.assertEqual(len(d), dr.last_value)
+        
+    def test_count(self):
+        d=dic()
+        d.update({"K1":"V1", "K2":"V2", "A1":"AV1"})
+        
+        predicate=lambda k,v: k.lower().startswith("k")
+        
+        count=d.count(predicate)
+        self.assertEqual(2, count)
+        
+        
 
      
 if __name__ == '__main__':

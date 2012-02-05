@@ -15,6 +15,9 @@ class liste(list):
     to_enhance=['append', 'extend', 'insert', 'remove', 'reverse', 'sort']
     __metaclass__=meta_enhancer
 
+    def __init__(self, *p):
+        list.__init__(self, *p)
+
     def push(self, el):
         """
         Pushes an element at the front of the list
@@ -31,6 +34,65 @@ class liste(list):
         def _(x):
             return f(x, *args, **kwargs)
         return _
+
+    def clone(self):
+        return liste(self)
+    
+    def do(self, f, *args, **kwargs):
+        """
+        Calls 'f' on self, returns result
+        """
+        return self._f(f, *args, **kwargs)(self)
+    
+    def tee(self, f, *args, **kwargs):
+        """
+        Calls 'f' on self, returns self, keeps 'last value'
+        """
+        self.last_value=self._f(f, *args, **kwargs)(self)
+        return self
+
+    def invoke(self, function_name, *args, **kwargs):
+        """
+        Invokes 'function_name(*args, **kwargs)' on each element
+        
+        List([1,2]).invoke('__str__')
+        <=>
+        List([1,2]).map(lambda x: x.__str__())
+        """
+        return self.map(lambda x: getattr(x, function_name)(*args, **kwargs))
+
+    def find(self, f, *args, **kwargs):
+        """
+        Returns the first element matching the predicate 'f' else returns None
+        """
+        _f=partial(f, *args, **kwargs)
+        
+        for el in self:
+            if _f(el):
+                return el
+        
+    def count(self, f, *args, **kwargs):
+        """
+        Counts elements in the list matching 'f' predicate
+        """
+        _f=partial(f, *args, **kwargs)
+        
+        count=0
+        for el in self:
+            if _f(el):
+                count=count+1
+        return count
+        
+
+    def attr(self, attr):
+        """
+        Retrieves a specific attribute from all objects
+        
+        List([obj]).attr('attr')
+        <=>
+        List([obj]).map(lambda x: x.attr)
+        """
+        return self.map(lambda x: getattr(x, attr))
 
     def all(self, f, *args, **kwargs):
         """
@@ -82,3 +144,7 @@ class liste(list):
         """
         _f=partial(f, *args, **kwargs)
         return reduce(_f, self)
+
+    def __getslice__(self, *args, **kwargs):
+        return liste(list.__getslice__(self, *args, **kwargs))
+

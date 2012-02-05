@@ -21,13 +21,27 @@ class dic(dict):
         dict.__init__(self)
         self._safe=safe
         self._lock=False
+        self._exception=False
 
     def lock(self, state):
+        """
+        Lock-out 'write' operation
+        """
         self._lock=state
         
+    def raise_exception(self, state):
+        """
+        Raise exception on 'write' operation when locked
+        """
+        self._exception=state
+        
+    def clone(self):
+        return dic(self)
         
     def __setitem__(self, key, value):
         if self._lock:
+            if self._exception:
+                raise Exception("Locked - attempt on '%s' with '%s'" % (key, value))
             return
         
         dict.__setitem__(self, key, value)
@@ -71,5 +85,38 @@ class dic(dict):
 
         return False
 
-            
+    def map(self, f, *args, **kwargs):
+        """
+        Applies 'f' for each [k,v] pair - 'f' must return (k,v) pair
+        """
+        _f = self._f(f, *args, **kwargs)
+        
+        d=dic()
+        for k,v in self.items():
+            nk, nv=_f(k,v)
+            d[nk]=nv
+        self.clear()
+        return self.clear().update(d)
+
+    def do(self, f, *args, **kwargs):
+        self.last_value=f(self, *args, **kwargs)
+        return self
+        
+    @classmethod
+    def fromkeys(cls, *args, **kwargs):
+        return dic(dict.fromkeys(*args, **kwargs))
+    
+    
+    def count(self, f, *args, **kwargs):
+        """
+        Count pairs matching predicate
+        """
+        _f=self._f(f, *args, **kwargs)
+        
+        count=0
+        for k,v in self.items():
+            if _f(k,v):
+                count=count+1
+        return count
+    
     
