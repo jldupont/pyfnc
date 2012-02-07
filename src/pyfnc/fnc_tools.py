@@ -20,6 +20,9 @@ def partial(fn, *pargs):
 
 def check_pair(pair):
     """ (e1, e2) --> (type|value, value)
+    
+    >>> check_pair((True, True))
+    True
     """
     e1, e2=pair
     if e1==e2 or e1==any:
@@ -35,6 +38,8 @@ def check_pair(pair):
 def check_match_type(tuples):
     """
     >>> import types, logging
+    >>> check_match_type( [(True, True), (False, False)] )
+    True
     >>> check_match_type( [(int, 2), (str, "string")] )
     True
     >>> check_match_type( [(int, 2), ("ok", "ok")] )
