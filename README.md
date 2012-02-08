@@ -50,6 +50,40 @@ Erlang style function dispatch:
 	"Hello Mrs. Corriveau!"
 
 
+Clean looking reducers:
+
+
+	@pattern(False, any)
+	def comp_reducer_FA(p1, p2):
+	    return False
+	
+	@pattern(str, str)
+	def comp_reducer_SS(p1, p2):
+	    if p1==p2:
+	        return p1
+	    return False
+	
+	@patterned
+	def comp_reducer(p1, p2):
+	    """
+	    Reducer
+	    
+	    Check if all strings are equal
+	    """
+	
+	
+	def strings_comparator(l):
+	    """
+	    Returns the common string if all elements of 'l' are equal
+	    else returns False 
+	    """
+	    if len(l)<2:
+	        return False
+	    
+	    return reduce(comp_reducer, l)
+    
+
+
 Tests
 =====
 
@@ -62,6 +96,8 @@ A source package is provided through the CheeseShop on http://pypi.python.org/ .
 
 History
 =======
+
+0.1.0 : support for function names with multiple '_'
 
 0.1.0 : initial release 
 

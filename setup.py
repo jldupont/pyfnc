@@ -6,7 +6,7 @@
     @author: jldupont
 """
 __author__  ="Jean-Lou Dupont"
-__version__ ="0.1.0"
+__version__ ="0.1.1"
 
 
 from distutils.core import setup
@@ -65,6 +65,39 @@ Erlang style function dispatch:
     "Hello Mrs. Corriveau!"
 
 
+Clean looking reducers:
+
+
+    @pattern(False, any)
+    def comp_reducer_FA(p1, p2):
+        return False
+    
+    @pattern(str, str)
+    def comp_reducer_SS(p1, p2):
+        if p1==p2:
+            return p1
+        return False
+    
+    @patterned
+    def comp_reducer(p1, p2):
+        '''
+        Reducer
+        
+        Check if all strings are equal
+        '''
+    
+    
+    def strings_comparator(l):
+        '''
+        Returns the common string if all elements of 'l' are equal
+        else returns False 
+        '''
+        if len(l)<2:
+            return False
+        
+        return reduce(comp_reducer, l)
+
+
 Tests
 =====
 
@@ -79,11 +112,6 @@ setup(name=         'pyfnc',
       url=          'http://www.systemical.com/doc/opensource/pyfnc',
       package_dir=  {'': "src",},
       packages=     find_packages("src"),
-      scripts=      [
-                     ],
-      package_data = {
-                      '':[ "*.gif", "*.png", "*.jpg" ],
-                      },
       include_package_data=True,                      
       zip_safe=False
       ,long_description=DESC

@@ -17,7 +17,7 @@ def patterned(f):
     ### speed-up execution:
     ###  provide this dict to the wrapper closure
     psf=MDICT.get((f.__module__, f.__name__), {})
-    
+
     @wraps(f)
     def wrapper(*pa):
         """
@@ -43,10 +43,17 @@ class pattern(object):
     def __init__(self, *ps):
         self.ps=ps
         
-    def basename(self, f):
+    @staticmethod
+    def basename(f):
+        """
+        >>> pattern.basename("some_package.some_module.some_named_function_sig")
+        'some_named_function'
+        >>> pattern.basename("some_package.some_module.function_sig")
+        'function'
+        """
         bits=f.split(".")
         fname=bits[-1]
-        return fname.split("_")[0]
+        return fname.rsplit("_", 1)[-2]
         
     def __call__(self, f):
         """
@@ -55,7 +62,7 @@ class pattern(object):
         """
         global MDICT
         
-        base_function_name=self.basename(f.__name__)
+        base_function_name=pattern.basename(f.__name__)
         
         psb=MDICT.get((f.__module__, base_function_name), [])
         psb.append((f, self.ps))

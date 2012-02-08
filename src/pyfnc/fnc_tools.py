@@ -3,6 +3,18 @@
     @author: jldupont
 """
 import types
+import functools
+
+def coroutine(func):
+    """
+    Decorator used for coroutine declaration
+    """
+    @functools.wraps(func)
+    def start(*args, **kwargs):
+        cr=func(*args, **kwargs)
+        cr.next()
+        return cr
+    return start
 
 def partial(fn, *pargs):
     """
