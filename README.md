@@ -97,7 +97,7 @@ A source package is provided through the CheeseShop on http://pypi.python.org/ .
 History
 =======
 
-0.1.0 : support for function names with multiple '_'
+0.1.2 : support for function names with multiple '_'
 
 0.1.0 : initial release 
 
